@@ -8,6 +8,8 @@ from model.cnn_model import VideoEmotionDetection
 
 device = torch.device('cuda') if torch.cuda.is_available() else 'cpu'
 
+print("Device:", device)
+
 model = VideoEmotionDetection()
 model.to(device)
 if torch.cuda.is_available():
@@ -19,6 +21,8 @@ transforms = transforms.Compose([
 
 train = RAVDESS('./dataset/', transforms)
 n_samples = len(train)
+print("n_samples:", n_samples)
+
 train, valid = data.random_split(train, [int(n_samples * 0.8), int(n_samples * 0.2)])
 
 train_loader = data.DataLoader(train, batch_size=1)
@@ -27,7 +31,9 @@ valid_loader = data.DataLoader(valid, batch_size=1)
 criterion = torch.nn.CrossEntropyLoss()
 optimizer = torch.optim.SGD(model.parameters(), lr=0.01)
 
-epochs = 5
+epochs = 50
+print("epochs:", epochs)
+
 min_valid_loss = np.inf
 
 for e in range(epochs):
@@ -41,6 +47,7 @@ for e in range(epochs):
 
         optimizer.zero_grad()
         target = model(data)
+
         loss = criterion(target, labels)
         loss.backward()
         optimizer.step()

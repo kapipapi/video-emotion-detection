@@ -10,7 +10,7 @@ class Data:
         self.label: int = self.get_label()
 
     def get_label(self) -> int:
-        return int(self.filepath.split('-')[2])
+        return int(self.filepath.split('-')[2]) - 1
 
 
 class RAVDESS(data.Dataset):
