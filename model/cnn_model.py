@@ -11,7 +11,7 @@ def conv1d_block(in_channels, out_channels, kernel_size=3, stride=1, padding='sa
 
 
 class VideoEmotionDetection(nn.Module):
-    def __int__(self):
+    def __init__(self):
         super(VideoEmotionDetection, self).__init__()
 
         self.n_classes = 8
@@ -77,10 +77,7 @@ class VideoEmotionDetection(nn.Module):
         return x
 
     def forward_stage1(self, x):
-        # Getting samples per batch
-        assert x.shape[0] % self.im_per_sample == 0, "Batch size is not a multiple of sequence length."
-        n_samples = x.shape[0] // self.im_per_sample
-        x = x.view(n_samples, self.im_per_sample, x.shape[1])
+        x = x.reshape((1, 15, x.shape[1]))
         x = x.permute(0, 2, 1)
         x = self.conv1d_0(x)
         x = self.conv1d_1(x)
