@@ -64,6 +64,7 @@ class VideoEmotionDetection(nn.Module):
 
         self.classifier_1 = nn.Sequential(
             nn.Linear(128, 8),
+            nn.Softmax(dim=0),
         )
 
     def forward_features(self, x):
@@ -77,25 +78,20 @@ class VideoEmotionDetection(nn.Module):
         return x
 
     def forward_stage1(self, x):
-        x = x.reshape((1, 15, x.shape[1]))
-        x = x.permute(0, 2, 1)
+        x = x.reshape((x.shape[0], x.shape[1], 1))
         x = self.conv1d_0(x)
         x = self.conv1d_1(x)
-        return x
-
-    def forward_stage2(self, x):
         x = self.conv1d_2(x)
         x = self.conv1d_3(x)
         return x
 
     def forward_classifier(self, x):
-        x = x.mean([-1])  # pooling accross temporal dimension
+        x = x.mean([-1])
         x1 = self.classifier_1(x)
         return x1
 
     def forward(self, x):
         x = self.forward_features(x)
         x = self.forward_stage1(x)
-        x = self.forward_stage2(x)
         x = self.forward_classifier(x)
         return x

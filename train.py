@@ -1,3 +1,4 @@
+import cv2
 import torch
 import numpy as np
 import torch.utils.data as data
@@ -25,13 +26,13 @@ print("n_samples:", n_samples)
 
 train, valid = data.random_split(train, [int(n_samples * 0.8), int(n_samples * 0.2)])
 
-train_loader = data.DataLoader(train, batch_size=1)
-valid_loader = data.DataLoader(valid, batch_size=1)
+train_loader = data.DataLoader(train, batch_size=10)
+valid_loader = data.DataLoader(valid, batch_size=10)
 
 criterion = torch.nn.CrossEntropyLoss()
 optimizer = torch.optim.SGD(model.parameters(), lr=0.01)
 
-epochs = 50
+epochs = 10
 print("epochs:", epochs)
 
 min_valid_loss = np.inf
@@ -43,7 +44,7 @@ for e in range(epochs):
         data, labels = data
 
         if torch.cuda.is_available():
-            data, labels = data[0].cuda(), labels.cuda()
+            data, labels = data.cuda(), labels.cuda()
 
         optimizer.zero_grad()
         target = model(data)
@@ -59,14 +60,13 @@ for e in range(epochs):
         data, labels = data
 
         if torch.cuda.is_available():
-            data, labels = data[0].cuda(), labels.cuda()
+            data, labels = data.cuda(), labels.cuda()
 
         target = model(data)
         loss = criterion(target, labels)
         valid_loss = loss.item() * data.size(0)
 
-    print(
-        f'Epoch {e + 1} \t\t Training Loss: {train_loss / len(train_loader)} \t\t Validation Loss: {valid_loss / len(valid_loader)}')
+    print(f'Epoch {e + 1} \t\t Training Loss: {train_loss / len(train_loader)} \t\t Validation Loss: {valid_loss / len(valid_loader)}')
     if min_valid_loss > valid_loss:
         print(f'Validation Loss Decreased({min_valid_loss:.6f}--->{valid_loss:.6f}) \t Saving The Model')
         min_valid_loss = valid_loss
