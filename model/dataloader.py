@@ -28,16 +28,18 @@ class RAVDESS(data.Dataset):
         return arr
 
     def __getitem__(self, index) -> (np.array, int):
-        d = self.data[index // 15]
+        d = self.data[index]
 
-        img = np.load(d.filepath)[index % 15]
+        clip = np.load(d.filepath)
 
         if self.transforms is not None:
-            img = self.transforms(img)
+            clip = [self.transforms(img) for img in clip]
 
-        # clip = torch.stack(img, 0)
+        clip = torch.stack(clip, 0)
 
-        return img, d.label
+        label = torch.tensor([d.label]*len(clip))
+
+        return clip, label
 
     def __len__(self):
-        return len(self.data) * 15
+        return len(self.data)

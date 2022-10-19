@@ -64,7 +64,6 @@ class VideoEmotionDetection(nn.Module):
 
         self.classifier_1 = nn.Sequential(
             nn.Linear(128, 8),
-            nn.Softmax(dim=0),
         )
 
     def forward_features(self, x):
@@ -87,8 +86,8 @@ class VideoEmotionDetection(nn.Module):
 
     def forward_classifier(self, x):
         x = x.mean([-1])
-        x1 = self.classifier_1(x)
-        return x1
+        x = self.classifier_1(x)
+        return x
 
     def forward(self, x):
         x = self.forward_features(x)
