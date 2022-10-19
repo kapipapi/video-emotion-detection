@@ -39,7 +39,7 @@ valid_loader = data.DataLoader(valid, batch_size=batchSize)
 criterion = torch.nn.CrossEntropyLoss()
 optimizer = torch.optim.SGD(model.parameters(), lr=0.01)
 
-epochs = 10
+epochs = 50
 print("epochs:", epochs)
 
 min_valid_loss = np.inf
@@ -87,4 +87,4 @@ for e in range(epochs):
         print(f'Validation Loss Decreased({min_valid_loss:.6f}--->{valid_loss:.6f}) \t Saving The Model')
         min_valid_loss = valid_loss
         # Saving State Dict
-        torch.save(model.state_dict(), 'saved_model_10epochs.pth')
+        torch.save(model.state_dict(), 'saved_model_50epochs.pth')
