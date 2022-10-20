@@ -37,9 +37,7 @@ class RAVDESS(data.Dataset):
 
         clip = torch.stack(clip, 0)
 
-        label = torch.tensor([d.label]*len(clip))
-
-        return clip, label
+        return clip, d.label
 
     def __len__(self):
         return len(self.data)

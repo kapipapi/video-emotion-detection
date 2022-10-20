@@ -12,14 +12,14 @@ mtcnn = MTCNN(image_size=(720, 1280), device=device)
 mtcnn.to(device)
 
 model = VideoEmotionDetection()
-model.load_state_dict(torch.load('/home/kacper/Documents/video-emotion-detection/saved_model_10epochs.pth'))
+model.load_state_dict(torch.load('/home/kacper/Documents/video-emotion-detection/saved_model_50epochs.pth'))
 model.to(device)
 if torch.cuda.is_available():
     model = model.cuda()
 model.eval()
 
-# cap = cv2.VideoCapture("/home/kacper/Documents/video-emotion-detection/dataset/Actor_01/01-01-01-01-01-01-01.mp4")
-cap = cv2.VideoCapture(0)
+cap = cv2.VideoCapture("/home/kacper/Documents/video-emotion-detection/dataset/Actor_01/01-01-07-01-01-01-01.mp4")
+# cap = cv2.VideoCapture(0)
 
 emotions = ["neutral", "calm", "happy", "sad", "angry", 'fearful', 'disgust', 'surprised']
 
@@ -51,6 +51,7 @@ while True:
         im_tensor = torch.stack([im_tensor])
 
         output = model(im_tensor)
-        print(emotions[np.argmax(torch.nn.functional.softmax(output, dim=1).tolist())])
+        output = np.argmax(torch.nn.functional.softmax(output, dim=1).tolist())
+        print(output, emotions[output])
 
         cv2.waitKey(1)

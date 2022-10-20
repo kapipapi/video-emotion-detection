@@ -12,7 +12,6 @@ device = torch.device('cuda') if torch.cuda.is_available() else 'cpu'
 print("Device:", device)
 
 model = VideoEmotionDetection()
-# model.load_state_dict(torch.load('/home/kacper/Documents/video-emotion-detection/saved_model_10epochs_loss15.345.pth'))
 model.to(device)
 if torch.cuda.is_available():
     model = model.cuda()
@@ -55,7 +54,6 @@ for e in range(epochs):
 
         n_frames = data.shape[1]
         data = data.reshape(data.shape[0] * data.shape[1], data.shape[2], data.shape[3], data.shape[4])
-        labels = labels.reshape((batchSize * n_frames,))
 
         optimizer.zero_grad()
         target = model(data)
@@ -75,7 +73,6 @@ for e in range(epochs):
 
         n_frames = data.shape[1]
         data = data.reshape(data.shape[0] * data.shape[1], data.shape[2], data.shape[3], data.shape[4])
-        labels = labels.reshape((batchSize * n_frames,))
 
         target = model(data)
         loss = criterion(target, labels)
@@ -87,4 +84,4 @@ for e in range(epochs):
         print(f'Validation Loss Decreased({min_valid_loss:.6f}--->{valid_loss:.6f}) \t Saving The Model')
         min_valid_loss = valid_loss
         # Saving State Dict
-        torch.save(model.state_dict(), 'saved_model_50epochs.pth')
+        torch.save(model.state_dict(), 'saved_model.pth')
