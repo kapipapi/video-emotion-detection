@@ -2,11 +2,12 @@ import numpy as np
 import torch
 import torch.utils.data as data
 from torchvision import transforms
+import matplotlib.pyplot as plt
 
 from model.cnn_model import VideoEmotionDetection
 from model.dataloader import RAVDESS
 
-from sklearn.metrics import confusion_matrix, accuracy_score, f1_score
+from sklearn.metrics import confusion_matrix, accuracy_score, f1_score, ConfusionMatrixDisplay
 
 device = torch.device('cuda') if torch.cuda.is_available() else 'cpu'
 
@@ -60,3 +61,9 @@ print("accuracy:", ac)
 print("f1_score:", f1)
 
 np.savetxt("confusion_matrix.txt", cm, fmt='%.d', delimiter="\t")
+
+disp = ConfusionMatrixDisplay(confusion_matrix=cm,
+                              display_labels=["neutral", "calm", "happy", "sad", "angry", 'fearful', 'disgust',
+                                              'surprised'])
+disp.plot()
+plt.show()
