@@ -17,7 +17,7 @@ save_length = 3.6  # seconds
 
 failed_videos = []
 root = '../dataset/'
-avoid_actor_number = list(range(1, 10 + 1))  # from 1 to 10
+avoid_actor_number = list(range(1, 17 + 1))  # from 1 to 17
 
 select_distributed = lambda m, n: [i * n // m + n // (2 * m) for i in range(m)]
 for directory in sorted(os.listdir(root)):

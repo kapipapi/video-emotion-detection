@@ -13,7 +13,7 @@ device = torch.device('cuda') if torch.cuda.is_available() else 'cpu'
 
 model = VideoEmotionDetection()
 model.load_state_dict(
-    torch.load('/home/kacper/Documents/video-emotion-detection/saved_models/saved_model_pretrained_50epochs.pth',
+    torch.load('/home/kacper/Documents/video-emotion-detection/saved_models/saved_model_100epochs.pth',
                map_location=device))
 model.to(device)
 if torch.cuda.is_available():
@@ -24,11 +24,11 @@ transforms = transforms.Compose([
 ])
 
 # avoid these actors because these are training and validation dataset
-avoid_actor_number = list(range(1, 10 + 1))  # from 1 to 10
+avoid_actor_number = list(range(1, 17 + 1))  # from 1 to 17
 
 test = RAVDESS('./dataset/', transforms, avoid_actor_number)
 n_samples = len(test)
-batchSize = 4
+batchSize = 8
 test_loader = data.DataLoader(test, batch_size=batchSize)
 
 y_true = []
