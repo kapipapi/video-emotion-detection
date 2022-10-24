@@ -1,4 +1,3 @@
-import PIL.Image as PILI
 import torch
 import numpy as np
 import torch.utils.data as data
@@ -11,7 +10,8 @@ device = torch.device('cuda') if torch.cuda.is_available() else 'cpu'
 
 print("Device:", device)
 
-model = VideoEmotionDetection()
+model = VideoEmotionDetection(
+    '/home/kacper/Documents/video-emotion-detection/pretrained/EfficientFace_Trained_on_AffectNet7.pth.tar')
 model.to(device)
 if torch.cuda.is_available():
     model = model.cuda()
@@ -23,7 +23,11 @@ transforms = transforms.Compose([
     transforms.RandomRotation(20)
 ])
 
-train = RAVDESS('./dataset/', transforms)
+# save these actors for test purpose
+avoid_actor_number = [11, 12, 13, 14, 15]
+
+# generate dataset
+train = RAVDESS('./dataset/', transforms, avoid_actor_number)
 n_samples = len(train)
 print("n_samples:", n_samples)
 

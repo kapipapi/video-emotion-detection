@@ -20,26 +20,31 @@ def init_feature_extractor(model, path):
     model.load_state_dict(pre_trained_dict, strict=True)
 
 
-def load_efficient_face():
+def load_efficient_face(efficient_face_pretrained_path: str):
     device = torch.device('cuda') if torch.cuda.is_available() else 'cpu'
 
     model = efficient.EfficientFace.efficient_face()
-    init_feature_extractor(model,
-                           '/home/kacper/Documents/video-emotion-detection/EfficientFace_Trained_on_AffectNet7.pth.tar')
+
+    init_feature_extractor(model, efficient_face_pretrained_path)
     model.to(device)
     if torch.cuda.is_available():
         model = model.cuda()
+
+    if efficient_face_pretrained_path is not None:
+        # FREEZE EFFICIENT FACE PARAMETERS
+        for param in model.parameters():
+            param.requires_grad = False
 
     return model
 
 
 class VideoEmotionDetection(nn.Module):
-    def __init__(self):
+    def __init__(self, efficient_face_pretrained_path: str = None):
         super(VideoEmotionDetection, self).__init__()
 
         self.n_classes = 8
 
-        self.efficient_face = load_efficient_face()
+        self.efficient_face = load_efficient_face(efficient_face_pretrained_path)
 
         self.conv1d_0 = conv1d_block(1024, 64)
         self.conv1d_1 = conv1d_block(64, 64)

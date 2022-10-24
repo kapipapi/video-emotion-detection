@@ -17,12 +17,17 @@ save_length = 3.6  # seconds
 
 failed_videos = []
 root = '../dataset/'
+avoid_actor_number = list(range(1, 10 + 1))  # from 1 to 10
 
 select_distributed = lambda m, n: [i * n // m + n // (2 * m) for i in range(m)]
-for sess in sorted(os.listdir(root)):
-    for filename in tqdm(os.listdir(os.path.join(root, sess))):
+for directory in sorted(os.listdir(root)):
+    actor_number = int(directory.split("_")[1])
+    if avoid_actor_number is not None and actor_number in avoid_actor_number:
+        print(f"Avoiding actor with number {actor_number}")
+        continue
+    for filename in tqdm(os.listdir(os.path.join(root, directory))):
         if filename.endswith('.mp4'):
-            cap = cv2.VideoCapture(os.path.join(root, sess, filename))
+            cap = cv2.VideoCapture(os.path.join(root, directory, filename))
 
             # calculate length in frames
             framen = 0
@@ -31,7 +36,7 @@ for sess in sorted(os.listdir(root)):
                 if not i:
                     break
                 framen += 1
-            cap = cv2.VideoCapture(os.path.join(root, sess, filename))
+            cap = cv2.VideoCapture(os.path.join(root, directory, filename))
 
             if save_length * input_fps > framen:
                 skip_begin = int((framen - (save_length * input_fps)) // 2)
@@ -60,7 +65,7 @@ for sess in sorted(os.listdir(root)):
                 try:
                     gray = cv2.cvtColor(im, cv2.COLOR_BGR2GRAY)
                 except:
-                    failed_videos.append((sess, i))
+                    failed_videos.append((directory, i))
                     break
 
                 temp = im[:, :, -1]
@@ -81,6 +86,6 @@ for sess in sorted(os.listdir(root)):
             if len(frames_to_select) > 0:
                 for i in range(len(frames_to_select)):
                     numpy_video.append(np.zeros((224, 224, 3), dtype=np.uint8))
-            np.save(os.path.join(root, sess, filename[:-4] + '_facecroppad.npy'), np.array(numpy_video))
+            np.save(os.path.join(root, directory, filename[:-4] + '_facecroppad.npy'), np.array(numpy_video))
             if len(numpy_video) != 15:
-                print('Error', sess, filename)
+                print('Error', directory, filename)
