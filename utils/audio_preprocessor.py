@@ -1,7 +1,7 @@
 import librosa
 import pickle
 import numpy as np
-from dataloader import Audio
+from model.dataloader import Audio
 from sklearn.model_selection import train_test_split
 from sklearn import preprocessing
 
@@ -11,17 +11,15 @@ class Preprocessor:
         self.X = X
         self.y = y
 
+    #TODO("should be corrected due to bad normalization method")
     def __get_audio_features(self):
         features = []
         for i in list(self.X):
             x, sr = librosa.load(i)
             mfcc = librosa.feature.mfcc(y=x, sr=1, n_mfcc=40)
-            #mfcc final normalization
             mel = librosa.feature.melspectrogram(y=x, sr=sr)
-            #mel final normalization
             S = np.abs(librosa.stft(x))
             spec = librosa.feature.spectral_contrast(S=S, sr=sr)
-            #spec final normalization
             y = librosa.effects.harmonic(x)
             tonne = librosa.feature.tonnetz(y=y, sr=sr)
             feature_list = np.concatenate((mfcc, mel, spec, tonne), axis=0)
